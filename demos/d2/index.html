@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loop Classifier</title>
+
+  <!-- Font (Andika) with fallback to Andika New Basic -->
+  <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#00b0bc;   /* turquoise */
+      --accent:#fab826;    /* yellow */
+      --purple:#635ba9;    /* purple */
+      --ink:#253046;
+      --muted:#eef3f6;
+      --ok: #28c76f;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; padding:20px; min-height:100vh;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--primary) 100%);
+      font-family:'Andika','Andika New Basic',system-ui,Segoe UI,Arial,sans-serif;
+      color:var(--ink);
+    }
+    .game{
+      max-width:1100px; margin:0 auto; background:#fff; border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18); padding:20px; display:flex; flex-direction:column; gap:14px;
+    }
+    .header{display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between}
+    .title{margin:0; font-size:1.6rem; color:var(--purple)}
+    .meta{display:flex; gap:16px; align-items:center; font-weight:700; color:var(--purple)}
+    .badge{background:var(--muted); padding:6px 10px; border-radius:999px; border:2px solid var(--purple)}
+
+    .progress{width:100%; height:12px; background:#e8eef2; border-radius:10px; overflow:hidden}
+    .progress-fill{height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition:width .4s ease}
+
+    .tip{background:#f6fffe; border:2px dashed var(--primary); color:#114d52; font-weight:700;
+      text-align:center; padding:10px; border-radius:12px}
+
+    .board{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+    .column{display:flex; flex-direction:column; gap:12px}
+
+    /* SLOTS (instruction top-left) */
+    .slot{
+      position:relative;       /* required for local z-index */
+      background:#fbfcfe; border:3px dashed #bfcad6; border-radius:16px; padding:14px; min-height:130px;
+      display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start;
+      text-align:left; gap:10px; transition:.2s;
+      z-index: 0;
+    }
+    .slot .title{
+      font-weight:700; color:var(--purple); margin:0; font-size:1.02rem;
+      background:#fff; padding:8px 10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.06);
+    }
+    .slot.drag-over{border-color:var(--primary); background:#eefcff; transform:scale(1.01)}
+    .slot.correct{border-color:var(--ok); background:#f1fff6}
+    .slot.incorrect{border-color:#e57373; background:#fff5f5; animation:shake .4s}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+    /* Feedback tags: ALWAYS ON TOP */
+    .slot .feedback-tag{
+      position:absolute; bottom:8px; left:10px;
+      padding:4px 10px; border-radius:10px; font-weight:700; font-size:.9rem; box-shadow:0 2px 6px rgba(0,0,0,.08);
+      display:none;
+      z-index: 3;            /* above the card */
+      pointer-events: none;  /* don't block drag */
+    }
+    .slot .feedback-tag.ok{ background:var(--accent); color:#3d3000; border:2px solid #e6a70e }
+    .slot .feedback-tag.try{ background:#ffe4e4; color:#7a1e1e; border:2px solid #f5b0b0 }
+    .slot.show-ok .feedback-tag.ok{display:inline-block}
+    .slot.show-try .feedback-tag.try{display:inline-block}
+
+    /* OPTIONS grid (not vertical column) */
+    .options{
+      display:grid; 
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap:12px;
+      align-items:start;
+    }
+    .card{
+      background:#fff; border:none; border-radius:14px; width:100%; padding:10px;
+      display:flex; flex-direction:column; gap:6px; align-items:center; cursor:grab; user-select:none;
+      box-shadow:0 4px 10px rgba(0,0,0,.15); transition:.2s;
+      position: relative;
+      z-index: 1; /* below the feedback tag */
+    }
+    .card:hover{transform:translateY(-3px); box-shadow:0 6px 14px rgba(0,0,0,.22)}
+    .card.dragging{opacity:.75; transform:rotate(3deg)}
+    .card.placed{opacity:.85; cursor:default}
+    .card img{width:150px; height:auto; border-radius:10px; max-width:100%}
+
+    .done{
+      display:none; text-align:center; padding:26px; border-radius:16px;
+      background:linear-gradient(135deg, var(--primary), var(--accent)); color:#083236;
+    }
+    .done h2{margin:.2rem 0 0.6rem 0}
+    .btn{border:none; border-radius:999px; padding:10px 16px; font-weight:700; cursor:pointer}
+    .btn-primary{background:#fff; color:#0b6166; border:2px solid #0b6166}
+    .btn-primary:hover{filter:brightness(.95)}
+
+    @media (max-width: 900px){ .board{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <div class="header">
+      <h1 class="title">🔄 Loop Classifier</h1>
+      <div class="meta">
+        <span class="badge">Level: <span id="level">1</span>/6</span>
+        <span class="badge">Score: <span id="score">0</span></span>
+      </div>
+    </div>
+
+    <div class="progress"><div id="bar" class="progress-fill"></div></div>
+    <div class="tip">Drag each <strong>image</strong> to the matching <strong>instruction</strong> .</div>
+
+    <div class="board">
+      <!-- LEFT: Slots -->
+      <div class="column">
+        <div class="slot" id="slot1" data-expected="">
+          <p class="title" id="slot1Title">—</p>
+          <span class="feedback-tag ok">Well done!</span>
+          <span class="feedback-tag try">Try again</span>
+        </div>
+        <div class="slot" id="slot2" data-expected="">
+          <p class="title" id="slot2Title">—</p>
+          <span class="feedback-tag ok">Well done!</span>
+          <span class="feedback-tag try">Try again</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Options -->
+      <div class="column">
+        <div id="options" class="options"></div>
+      </div>
+    </div>
+
+    <div id="done" class="done">
+      <h2>🎉 Great job!</h2>
+      <p>You finished all levels.</p>
+      <p>Final score: <strong id="finalScore">0</strong>/12</p>
+      <button class="btn btn-primary" onclick="restart()">Play again</button>
+    </div>
+  </div>
+
+  <script>
+    // Base data A–J with English directions (no letter in the instruction)
+    const ALL = [
+      { id:'a', value:4, name:'right',     sym:'→', img:'./images/a.png' },
+      { id:'b', value:3, name:'down',      sym:'↓', img:'./images/b.png' },
+      { id:'c', value:5, name:'up',        sym:'↑', img:'./images/c.png' },
+      { id:'d', value:6, name:'right',     sym:'→', img:'./images/d.png' },
+      { id:'e', value:7, name:'northeast', sym:'↗', img:'./images/e.png' },
+      { id:'f', value:7, name:'left',      sym:'←', img:'./images/f.png' },
+      { id:'g', value:3, name:'right',     sym:'→', img:'./images/g.png' },
+      { id:'h', value:6, name:'down',      sym:'↓', img:'./images/h.png' },
+      { id:'i', value:4, name:'left',      sym:'←', img:'./images/i.png' },
+      { id:'j', value:5, name:'southwest', sym:'↙', img:'./images/j.png' }
+    ];
+    const L = (c)=>`Repeat ${c.value} times ${c.name} ${c.sym}`;
+
+    // State
+    let level = 1;  // 1..6
+    let score = 0;  // 0..12 (2 per level)
+    let placedInLevel = 0;
+    let current = null; // {slots:[id,id], options:[4]}
+
+    const byId = s => document.getElementById(s);
+    function shuffle(a){ const t=[...a]; for(let i=t.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [t[i],t[j]]=[t[j],t[i]];} return t; }
+
+    function newLevel(){
+      placedInLevel = 0;
+      byId('level').textContent = level;
+      byId('bar').style.width = ((level-1)/6*100)+'%';
+
+      const pick = shuffle(ALL).slice(0,4);     // 4 cards (2 correct + 2 distractors)
+      const [c1,c2] = pick;                     // first two are slots
+      current = {
+        slots: [c1.id, c2.id],
+        options: shuffle(pick)                   // 4 random options
+      };
+
+      // SLOTS
+      const s1 = byId('slot1'), s2 = byId('slot2');
+      s1.className = 'slot'; s2.className = 'slot';
+      s1.dataset.expected = c1.id; s2.dataset.expected = c2.id;
+      byId('slot1Title').textContent = L(c1);
+      byId('slot2Title').textContent = L(c2);
+      [s1,s2].forEach(s=>{
+        [...s.querySelectorAll('.card')].forEach(el=>el.remove());
+        s.querySelector('.feedback-tag.ok').style.display='none';
+        s.querySelector('.feedback-tag.try').style.display='none';
+        s.classList.remove('show-ok','show-try','correct','incorrect');
+      });
+
+      // OPTIONS (grid)
+      const list = byId('options');
+      list.innerHTML = '';
+      current.options.forEach((c, idx)=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.draggable = true;
+        card.dataset.cardId = c.id;
+        card.dataset.uid = `lv${level}-${idx}`;
+        card.innerHTML = `<img src="${c.img}" alt="Image ${c.id.toUpperCase()}" onerror="this.style.display='none'">`;
+        card.addEventListener('dragstart', onDragStart);
+        card.addEventListener('dragend', onDragEnd);
+        list.appendChild(card);
+      });
+
+      // DnD events for slots
+      [s1,s2].forEach(s=>{
+        s.addEventListener('dragover', e=>e.preventDefault());
+        s.addEventListener('dragenter', ()=>{ s.classList.add('drag-over'); });
+        s.addEventListener('dragleave', ()=>{ s.classList.remove('drag-over'); });
+        s.addEventListener('drop', onDrop);
+      });
+
+      byId('done').style.display = 'none';
+      document.querySelector('.board').style.display = 'grid';
+    }
+
+    // Drag
+    function onDragStart(e){
+      e.dataTransfer.setData('text/plain', e.currentTarget.dataset.uid);
+      e.currentTarget.classList.add('dragging');
+    }
+    function onDragEnd(e){ e.currentTarget.classList.remove('dragging'); }
+
+    function onDrop(e){
+      e.preventDefault();
+      const slot = e.currentTarget;
+      slot.classList.remove('drag-over');
+      const uid = e.dataTransfer.getData('text/plain');
+      const card = document.querySelector(`[data-uid="${uid}"]`);
+      if(!card || card.classList.contains('placed')) return;
+
+      const expected = slot.dataset.expected;
+      const actual = card.dataset.cardId;
+
+      // Reset previous feedback
+      slot.classList.remove('show-ok','show-try','incorrect','correct');
+      slot.querySelector('.feedback-tag.ok').style.display='none';
+      slot.querySelector('.feedback-tag.try').style.display='none';
+
+      if(actual === expected){
+        // Correct
+        slot.appendChild(card);
+        card.classList.add('placed');
+        card.draggable = false;
+
+        slot.classList.add('correct','show-ok');
+        const okTag = slot.querySelector('.feedback-tag.ok');
+        okTag.style.display='inline-block';
+
+        // Ensure the tag stays on top by re-appending it at the end
+        slot.appendChild(okTag);
+
+        score++; placedInLevel++;
+        byId('score').textContent = score;
+
+        if(placedInLevel === 2){
+          setTimeout(()=>{
+            if(level < 6){
+              level++;
+              newLevel();
+            }else{
+              byId('finalScore').textContent = score;
+              byId('bar').style.width = '100%';
+              document.querySelector('.board').style.display = 'none';
+              byId('done').style.display = 'block';
+            }
+          }, 700);
+        }
+      }else{
+        // Incorrect
+        slot.classList.add('incorrect','show-try');
+        const tryTag = slot.querySelector('.feedback-tag.try');
+        tryTag.style.display='inline-block';
+
+        // Bring the "try" tag to the front as well
+        slot.appendChild(tryTag);
+
+        setTimeout(()=>{
+          slot.classList.remove('incorrect','show-try');
+          tryTag.style.display='none';
+        }, 900);
+      }
+    }
+
+    function restart(){
+      level = 1; score = 0; byId('score').textContent = '0';
+      newLevel();
+    }
+
+    // Init
+    newLevel();
+  </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Memoria - Rompe Hielos</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 450px;
+            margin: 0 auto 40px auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .memory-card.flipped {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        .card-back {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card-front {
+            display: none;
+        }
+
+        .memory-card.flipped .card-back {
+            display: none;
+        }
+
+        .memory-card.flipped .card-front {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+
+
+        .registration-section {
+            text-align: center;
+        }
+
+        .form-container {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            margin-top: 10px;
+        }
+
+        .game-section {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .game-stats {
+                gap: 15px;
+            }
+            
+            .stat {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+
+            .form-container {
+                margin: 0 10px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Formulario de registro inicial -->
+        <div id="registrationForm" class="registration-section">
+            <div class="header">
+                <h1 class="title">🧠 Juego de Memoria</h1>
+                <p class="subtitle">Rompe el hielo y conecta con tu equipo</p>
+            </div>
+            
+            <div class="form-container">
+                <h2 class="form-title">📝 Registro de Participante</h2>
+                <form id="studentForm" onsubmit="registerStudent(event)">
+                    <div class="form-group">
+                        <label for="studentId">ID del Estudiante:</label>
+                        <input type="text" id="studentId" required placeholder="Ej: EST001">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentName">Nombre Completo:</label>
+                        <input type="text" id="studentName" required placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label for="className">Clase/Grupo:</label>
+                        <input type="text" id="className" required placeholder="Ej: Grupo A">
+                    </div>
+                    <button type="submit" class="btn btn-primary">🚀 Comenzar Juego</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sección del juego (inicialmente oculta) -->
+        <div id="gameSection" class="game-section" style="display: none;">
+            <div class="header">
+                <h1 class="title">🧠 Juego de Memoria</h1>
+                <p class="subtitle">¡Hola <span id="playerName"></span>! Encuentra los pares</p>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat">⏱️ Tiempo: <span id="timer">0:00</span></div>
+                <div class="stat">🎯 Movimientos: <span id="moves">0</span></div>
+                <div class="stat">✨ Pares: <span id="pairs">0/3</span></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="startNewGame()">🎮 Nuevo Juego</button>
+                <button class="btn" onclick="pauseGame()" id="pauseBtn">⏸️ Pausar</button>
+                <button class="btn" onclick="showHint()">💡 Pista</button>
+            </div>
+
+            <div class="memory-grid" id="gameGrid">
+                <!-- Las cartas se generarán dinámicamente -->
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <script>
+        /* ======= CONFIGURACIÓN APPS SCRIPT ======= */
+        const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzYC473SVrWD79W0zSIKEBaaaGViZonzXwvoZ82PQhwvgNMKr93PeTMpNlgpsCxOw2d/exec";
+        const API_KEY      = "palabra_clave";
+        let   ACTIVITY_ID  = "JUEGO_MEMORIA_01";
+        /* ============================= */
+
+        // API para comunicación con Apps Script
+        (function () {
+            let STUDENT_ID = "";
+            let STUDENT_NAME = "";
+            let CLASS_NAME = "";
+
+            window.GameAPI = {
+                setStudentInfo: ({ id = "", name = "", className = "", activityId = "" } = {}) => {
+                    STUDENT_ID   = String(id || "").trim();
+                    STUDENT_NAME = String(name || "").trim();
+                    CLASS_NAME   = String(className || "").trim();
+                    if (activityId) ACTIVITY_ID = String(activityId).trim();
+                    
+                    sessionStorage.setItem("student_id", STUDENT_ID);
+                    sessionStorage.setItem("student_name", STUDENT_NAME);
+                    sessionStorage.setItem("class", CLASS_NAME);
+                    sessionStorage.setItem("activity_id", ACTIVITY_ID);
+                    return true;
+                },
+
+                sendResult: async ({ intentos = 0, correctas = 0, answers = [], metadata = {} } = {}) => {
+                    const student_id   = STUDENT_ID   || sessionStorage.getItem("student_id")   || "";
+                    const student_name = STUDENT_NAME || sessionStorage.getItem("student_name") || "";
+                    const className    = CLASS_NAME   || sessionStorage.getItem("class")        || "";
+                    const activity_id  = sessionStorage.getItem("activity_id") || ACTIVITY_ID;
+
+                    const payload = {
+                        apiKey: API_KEY,
+                        student_id,
+                        student_name,
+                        class: className,
+                        activity_id,
+                        intentos,
+                        correctas,
+                        answers,
+                        metadata,
+                        userAgent: navigator.userAgent
+                    };
+
+                    try {
+                        const res = await fetch(ENDPOINT_URL, {
+                            method: "POST",
+                            headers: { "Content-Type": "text/plain" },
+                            body: JSON.stringify(payload)
+                        });
+
+                        let json = {};
+                        try { json = await res.json(); } catch (e) {}
+                        return json;
+                    } catch (error) {
+                        console.error("Error enviando resultado:", error);
+                        return { ok: false, error: error.message };
+                    }
+                }
+            };
+        })();
+
+        // Configuración del juego
+        let gameState = {
+            cards: [],
+            flippedCards: [],
+            matchedPairs: 0,
+            moves: 0,
+            timer: 0,
+            gameActive: false,
+            timerInterval: null,
+            isPaused: false,
+            startTime: null
+        };
+
+        // Imágenes del juego
+        const gameImages = [
+            'https://i.imgur.com/abItfOI.png',
+            'https://i.imgur.com/ChMUXlr.png', 
+            'https://i.imgur.com/4aNTqfP.png'
+        ];
+
+
+
+        // Función para registrar estudiante
+        function registerStudent(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const className = document.getElementById('className').value.trim();
+            
+            if (!studentId || !studentName || !className) {
+                alert('Por favor, completa todos los campos.');
+                return;
+            }
+            
+            // Guardar información del estudiante
+            GameAPI.setStudentInfo({
+                id: studentId,
+                name: studentName,
+                className: className,
+                activityId: ACTIVITY_ID
+            });
+            
+            // Mostrar nombre en la interfaz del juego
+            document.getElementById('playerName').textContent = studentName;
+            
+            // Ocultar formulario y mostrar juego
+            document.getElementById('registrationForm').style.display = 'none';
+            document.getElementById('gameSection').style.display = 'block';
+            
+            // Inicializar el juego
+            initializeGame();
+        }
+
+        // Inicializar el juego
+        function initializeGame() {
+            createGameGrid();
+            startNewGame();
+        }
+
+        // Crear la cuadrícula del juego
+        function createGameGrid() {
+            const grid = document.getElementById('gameGrid');
+            
+            // Crear pares de cartas con las 3 imágenes
+            gameState.cards = [...gameImages, ...gameImages].sort(() => Math.random() - 0.5);
+            
+            grid.innerHTML = '';
+            gameState.cards.forEach((imageUrl, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.index = index;
+                card.dataset.image = imageUrl;
+                card.innerHTML = `
+                    <div class="card-back">?</div>
+                    <div class="card-front"><img src="${imageUrl}" alt="Imagen del juego" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;" onerror="this.src=''; this.alt='Imagen no disponible'; this.style.display='none';"></div>
+                `;
+                card.addEventListener('click', () => flipCard(index));
+                grid.appendChild(card);
+            });
+        }
+
+        // Voltear carta
+        function flipCard(index) {
+            if (!gameState.gameActive || gameState.isPaused) return;
+            
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            if (gameState.flippedCards.length >= 2) return;
+
+            card.classList.add('flipped');
+            gameState.flippedCards.push(index);
+
+            if (gameState.flippedCards.length === 2) {
+                gameState.moves++;
+                document.getElementById('moves').textContent = gameState.moves;
+                
+                setTimeout(() => checkMatch(), 1000);
+            }
+        }
+
+        // Verificar coincidencia
+        function checkMatch() {
+            const [first, second] = gameState.flippedCards;
+            const firstCard = document.querySelector(`[data-index="${first}"]`);
+            const secondCard = document.querySelector(`[data-index="${second}"]`);
+            
+            if (gameState.cards[first] === gameState.cards[second]) {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                gameState.matchedPairs++;
+                document.getElementById('pairs').textContent = `${gameState.matchedPairs}/3`;
+                
+                if (gameState.matchedPairs === 3) {
+                    endGame();
+                }
+            } else {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+            }
+            
+            gameState.flippedCards = [];
+        }
+
+        // Iniciar nuevo juego
+        function startNewGame() {
+            gameState.matchedPairs = 0;
+            gameState.moves = 0;
+            gameState.timer = 0;
+            gameState.gameActive = true;
+            gameState.isPaused = false;
+            gameState.flippedCards = [];
+            gameState.startTime = new Date().toISOString();
+            
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('pairs').textContent = '0/3';
+            document.getElementById('timer').textContent = '0:00';
+            document.getElementById('pauseBtn').textContent = '⏸️ Pausar';
+            
+            createGameGrid();
+            startTimer();
+        }
+
+        // Temporizador
+        function startTimer() {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            
+            gameState.timerInterval = setInterval(() => {
+                if (!gameState.isPaused && gameState.gameActive) {
+                    gameState.timer++;
+                    const minutes = Math.floor(gameState.timer / 60);
+                    const seconds = gameState.timer % 60;
+                    document.getElementById('timer').textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        // Pausar juego
+        function pauseGame() {
+            gameState.isPaused = !gameState.isPaused;
+            const btn = document.getElementById('pauseBtn');
+            btn.textContent = gameState.isPaused ? '▶️ Continuar' : '⏸️ Pausar';
+        }
+
+        // Mostrar pista
+        function showHint() {
+            if (!gameState.gameActive || gameState.isPaused) return;
+            
+            const unmatched = document.querySelectorAll('.memory-card:not(.matched)');
+            if (unmatched.length >= 2) {
+                const randomCard = unmatched[Math.floor(Math.random() * unmatched.length)];
+                randomCard.classList.add('flipped');
+                setTimeout(() => {
+                    if (!randomCard.classList.contains('matched')) {
+                        randomCard.classList.remove('flipped');
+                    }
+                }, 1500);
+            }
+        }
+
+        // Finalizar juego
+        async function endGame() {
+            gameState.gameActive = false;
+            clearInterval(gameState.timerInterval);
+            
+            // Preparar datos para enviar
+            const timeText = document.getElementById('timer').textContent;
+            const totalPairs = 3;
+            const correctPairs = gameState.matchedPairs;
+            
+            // Metadata adicional
+            const metadata = {
+                timeCompleted: timeText,
+                totalTime: gameState.timer,
+                startTime: gameState.startTime,
+                endTime: new Date().toISOString(),
+                gameImages: gameImages.length
+            };
+            
+            // Respuestas del juego (movimientos realizados)
+            const answers = {
+                totalMoves: gameState.moves,
+                pairsFound: correctPairs,
+                totalPairs: totalPairs,
+                efficiency: Math.round((totalPairs / gameState.moves) * 100)
+            };
+            
+            try {
+                // Enviar resultado al Apps Script
+                const result = await GameAPI.sendResult({
+                    intentos: gameState.moves,
+                    correctas: correctPairs,
+                    answers: answers,
+                    metadata: metadata
+                });
+                
+                let message = `¡Felicidades! 🎉\nCompletaste el juego en ${gameState.moves} movimientos y ${timeText}.\n\n¡Excelente trabajo!`;
+                
+                if (result.ok) {
+                    message += `\n\n✅ Resultado guardado exitosamente.`;
+                } else {
+                    message += `\n\n⚠️ Hubo un problema al guardar el resultado.`;
+                }
+                
+                setTimeout(() => {
+                    alert(message);
+                }, 500);
+                
+            } catch (error) {
+                console.error("Error al finalizar el juego:", error);
+                setTimeout(() => {
+                    alert(`¡Felicidades! 🎉\nCompletaste el juego en ${gameState.moves} movimientos y ${timeText}.\n\n¡Excelente trabajo!\n\n⚠️ No se pudo guardar el resultado.`);
+                }, 500);
+            }
+        }
+
+
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si ya hay datos de estudiante guardados
+            const savedStudentId = sessionStorage.getItem("student_id");
+            const savedStudentName = sessionStorage.getItem("student_name");
+            
+            if (savedStudentId && savedStudentName) {
+                // Si ya hay datos, ir directo al juego
+                document.getElementById('playerName').textContent = savedStudentName;
+                document.getElementById('registrationForm').style.display = 'none';
+                document.getElementById('gameSection').style.display = 'block';
+                initializeGame();
+            }
+            // Si no hay datos, se muestra el formulario por defecto
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98973657010fcfb1',t:'MTc1OTYwNzQ2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -107,4 +107,18 @@
 
   /* ---------- 6. Año dinámico ---------- */
   document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
+
+  /* ---------- 7. Fallback de thumbnail de YouTube si hqdefault falla ---------- */
+  // hqdefault SIEMPRE existe en YouTube, pero por si acaso (videos privados, etc.)
+  // probamos con mqdefault como fallback.
+  document.querySelectorAll('.video-facade__thumb, .aitem__thumb-img').forEach((img) => {
+    img.addEventListener('error', () => {
+      if (img.src.includes('hqdefault')) {
+        img.src = img.src.replace('hqdefault', 'mqdefault');
+      } else if (img.src.includes('mqdefault')) {
+        // Última opción: el thumbnail estándar
+        img.src = img.src.replace('mqdefault', 'default');
+      }
+    });
+  });
 })();

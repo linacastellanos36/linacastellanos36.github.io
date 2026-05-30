@@ -409,82 +409,168 @@
         <p class="section-sub">
           Un programa de seis rutas que habilita a más de 4.000 docentes
           para integrar inteligencia artificial en su práctica. Dirección
-          integral del programa, QA y desarrollo de varias rutas.
+          integral, control de calidad y desarrollo de rutas.
         </p>
       </div>
 
-      <!-- Routes -->
+      <!-- ROUTES -->
       <div class="routes">
         <div class="route">
           <span class="route__num">R1</span>
-          <h3>IA inicial para docentes</h3>
-          <p>Fundamentos accionables: qué es, qué puede y qué no puede hacer la IA en el aula.</p>
+          <h3>Fundamentos</h3>
+          <p>Qué es, qué puede y qué no puede hacer la IA en el aula. Base accionable para docentes.</p>
         </div>
         <div class="route">
           <span class="route__num">R2</span>
-          <h3>Ética y uso responsable de la IA</h3>
+          <h3>Criterio responsable</h3>
           <p>Sesgos, privacidad, integridad académica y criterios de uso responsable.</p>
-          <span class="route__mine">Desarrollada por mí</span>
         </div>
         <div class="route">
           <span class="route__num">R3</span>
-          <h3>Creador digital con IA</h3>
-          <p>Creación de recursos y materiales con herramientas generativas.</p>
-          <span class="route__mine">Desarrollada por mí</span>
+          <h3>Creación educativa</h3>
+          <p>Diseño y producción de recursos y materiales con herramientas generativas.</p>
+          <span class="route__badge route__badge--own">Desarrollo directo</span>
         </div>
         <div class="route">
           <span class="route__num">R4</span>
-          <h3>Evaluación educativa con IA</h3>
-          <p>Rúbricas, retroalimentación y evaluación asistida por IA.</p>
+          <h3>Diseño didáctico</h3>
+          <p>Planificación, secuenciación y evaluación de aprendizajes asistidas por IA.</p>
         </div>
         <div class="route">
           <span class="route__num">R5</span>
-          <h3>Comunicación docente y atención educativa con IA</h3>
-          <p>Comunicación con familias y estudiantes potenciada por IA.</p>
-          <span class="route__mine">Desarrollada por mí</span>
+          <h3>Comunicación</h3>
+          <p>Comunicación con familias, estudiantes y comunidad educativa potenciada por IA.</p>
+          <span class="route__badge">En colaboración</span>
         </div>
         <div class="route">
           <span class="route__num">R6</span>
-          <h3>Multiagentes de IA para la educación</h3>
-          <p>Diseño de sistemas multiagente para transformación institucional.</p>
+          <h3>Transformación institucional</h3>
+          <p>Sistemas multiagente y procesos para escalar el cambio dentro del colegio.</p>
+          <span class="route__badge">En colaboración</span>
         </div>
       </div>
 
-      <!-- Role + media -->
-      <div class="ai__role">
-        <div class="ai__role-text">
-          <h3>Mi rol en el programa</h3>
-          <p>
-            Dirección de todos los cursos y programas de plataforma y
-            <strong>QA</strong>, además del desarrollo directo en
-            insignias digitales, <strong>vibecoding</strong>, agentes,
-            ética y uso responsable, comunicación y creación digital.
-          </p>
-          <p class="ai__role-meta">
-            Alcance: los mismos países donde opera la plataforma — Brasil,
-            Ecuador, Colombia, México, Perú, Panamá y Latam, con inmersión
-            en Egipto y Emiratos Árabes.
-          </p>
-        </div>
+      <!-- PHASE: PROGRAMA EN PRODUCCIÓN -->
+      <div class="ai-phase">
+        <span class="ai-phase__tag">El programa en producción</span>
+        <h3 class="ai-phase__title">Catálogo y recorrido del programa</h3>
+      </div>
 
-        <!-- MEDIA PLACEHOLDERS: reemplaza por tus capturas/vídeos reales -->
-        <div class="ai__media">
-          <div class="media-card media-card--placeholder">
-            <span class="media-card__tag">Captura</span>
-            <span class="media-card__title">Insignias digitales</span>
-            <span class="media-card__hint">assets/insignias.png</span>
+      <div class="ai-production">
+        <figure class="ai-production__shot">
+          <div class="shot__frame">
+            <img src="assets/cdi-catalogo.png"
+                 alt="Captura del catálogo del programa con las 6 rutas desplegadas."
+                 loading="lazy" />
           </div>
-          <div class="media-card media-card--placeholder">
-            <span class="media-card__tag">Demo</span>
-            <span class="media-card__title">Agente / vibecoding</span>
-            <span class="media-card__hint">assets/agente.png</span>
+          <figcaption class="shot__cap">
+            <span class="shot__cap-label">Catálogo del programa</span>
+            Arquitectura 6 rutas × 6 programas con filtros por ruta y
+            programa, búsqueda por tema, y vista de detalle por
+            capítulo. Live en Firebase.
+          </figcaption>
+        </figure>
+
+        <figure class="ai-production__video">
+          <a class="video-embed video-facade"
+             href="https://youtu.be/1ar0D7uhDmI"
+             target="_blank"
+             rel="noopener"
+             aria-label="Ver vídeo en YouTube: recorrido del catálogo y la interfaz de certificación.">
+            <img class="video-facade__thumb"
+                 src="https://i.ytimg.com/vi/1ar0D7uhDmI/hqdefault.jpg"
+                 alt="Vista previa del vídeo."
+                 loading="lazy" />
+            <span class="video-facade__play" aria-hidden="true">
+              <span class="video-facade__play-icon">▶</span>
+            </span>
+            <span class="video-facade__badge">YouTube ↗</span>
+          </a>
+          <figcaption class="shot__cap">
+            <span class="shot__cap-label">Vídeo · recorrido</span>
+            Tour por el catálogo y la interfaz de certificación
+            docente. ~3 minutos.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- PHASE: DEMOS JUGABLES -->
+      <div class="ai-phase">
+        <span class="ai-phase__tag">Demos jugables · vibecoding</span>
+        <h3 class="ai-phase__title">Componentes interactivos diseñados para el programa</h3>
+        <p class="ai-phase__sub">
+          Construidos con vibecoding como parte del trabajo en las rutas
+          del programa. Disponibles bajo solicitud para no exponer
+          material interno de Arukay.
+        </p>
+      </div>
+
+      <div class="demos-grid">
+        <article class="demo-card">
+          <div class="shot__frame">
+            <video class="shot__video"
+                   src="assets/demo-vibecoding-1.webm"
+                   autoplay loop muted playsinline
+                   preload="metadata"
+                   aria-label="Animación del juego de memoria: registro, inicio y emparejamiento de cartas."></video>
           </div>
-          <div class="media-card media-card--placeholder">
-            <span class="media-card__tag">Vídeo</span>
-            <span class="media-card__title">Recorrido del programa</span>
-            <span class="media-card__hint">embed de YouTube</span>
+          <div class="demo-card__meta">
+            <span class="demo-card__num">D1</span>
+            <h4 class="demo-card__title">Juego de Memoria · Rompe el hielo</h4>
+            <p class="demo-card__desc">
+              Dinámica grupal con registro de participante, timer,
+              contador de movimientos y sistema de pistas. JavaScript
+              vanilla, sin dependencias.
+            </p>
           </div>
-        </div>
+        </article>
+
+        <article class="demo-card">
+          <div class="shot__frame">
+            <video class="shot__video"
+                   src="assets/demo-vibecoding-2.webm"
+                   autoplay loop muted playsinline
+                   preload="metadata"
+                   aria-label="Animación del Loop Classifier: drag and drop de bucles entre categorías."></video>
+          </div>
+          <div class="demo-card__meta">
+            <span class="demo-card__num">D2</span>
+            <h4 class="demo-card__title">Loop Classifier <span class="demo-card__lang">EN</span></h4>
+            <p class="demo-card__desc">
+              Clasificación drag &amp; drop de bucles según patrón de
+              repetición y dirección. 6 niveles + sistema de score.
+              Versión en inglés, estilo code.org.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <div class="demos-cta">
+        <a class="demos-cta__btn" href="mailto:lmcastellanosd@gmail.com?subject=Acceso%20a%20demos%20jugables%20del%20portafolio&body=Hola%20Lina%2C%20me%20gustar%C3%ADa%20probar%20los%20demos%20jugables%20de%20la%20Certificaci%C3%B3n%20Docente%20en%20IA.">
+          Solicitar acceso a los demos jugables →
+        </a>
+        <span class="demos-cta__hint">
+          Envío el enlace privado por correo. Sin formularios.
+        </span>
+      </div>
+
+      <!-- PHASE: MI ROL -->
+      <div class="ai-phase ai-phase--last">
+        <span class="ai-phase__tag">Mi rol en el programa</span>
+      </div>
+      <div class="ai-role-block">
+        <p class="ai-role-block__lead">
+          Dirección integral del programa, control de calidad y ajustes
+          en las <strong>6 rutas</strong>. Desarrollo directo de la
+          <strong>Ruta 3 — Creación educativa</strong> y colaboración
+          en las rutas <strong>5 — Comunicación</strong> y
+          <strong>6 — Transformación institucional</strong>.
+        </p>
+        <p class="ai-role-block__meta">
+          Alcance: los mismos países donde opera la plataforma — Brasil,
+          Ecuador, Colombia, México, Perú, Panamá y Latam, con inmersión
+          en Egipto y Emiratos Árabes.
+        </p>
       </div>
     </div>
   </section>
@@ -676,13 +762,25 @@
           </p>
         </div>
         <div class="archive-sub__grid">
-          <a class="aitem" href="https://youtu.be/kA78CXoV-Co" target="_blank" rel="noopener">
-            <div class="aitem__thumb"><span class="aitem__type">Vídeo interactivo</span><span class="aitem__play">▶</span></div>
+          <a class="aitem aitem--yt" href="https://youtu.be/kA78CXoV-Co" target="_blank" rel="noopener">
+            <div class="aitem__thumb">
+              <img src="https://i.ytimg.com/vi/kA78CXoV-Co/hqdefault.jpg"
+                   alt="Vista previa del vídeo Ciclos."
+                   loading="lazy" class="aitem__thumb-img" />
+              <span class="aitem__type">Vídeo interactivo</span>
+              <span class="aitem__play">▶</span>
+            </div>
             <h4>Ciclos</h4>
             <p>Storytelling, libretos y guiones.</p>
           </a>
-          <a class="aitem" href="https://youtu.be/Mvhh0jz1nKg" target="_blank" rel="noopener">
-            <div class="aitem__thumb"><span class="aitem__type">Vídeo bilingüe</span><span class="aitem__play">▶</span></div>
+          <a class="aitem aitem--yt" href="https://youtu.be/Mvhh0jz1nKg" target="_blank" rel="noopener">
+            <div class="aitem__thumb">
+              <img src="https://i.ytimg.com/vi/Mvhh0jz1nKg/hqdefault.jpg"
+                   alt="Vista previa del vídeo Habilidades digitales."
+                   loading="lazy" class="aitem__thumb-img" />
+              <span class="aitem__type">Vídeo bilingüe</span>
+              <span class="aitem__play">▶</span>
+            </div>
             <h4>Habilidades digitales</h4>
             <p>Producción audiovisual en segundo idioma.</p>
           </a>
